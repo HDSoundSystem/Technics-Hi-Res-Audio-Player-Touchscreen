@@ -635,7 +635,7 @@ function loadTrack(index, autoPlay = true) {
     const ti = (index + 1).toString().padStart(2, '0');
     const tl = playlist.length.toString().padStart(2, '0');
     document.getElementById('trackCounter').innerHTML =
-        'TRACK&nbsp;' +
+        'TRACK: ' +
         ti.split('').map(c => `<span class="digit">${c}</span>`).join('') +
         `&nbsp<span class="sep">/</span>&nbsp` +
         tl.split('').map(c => `<span class="digit">${c}</span>`).join('');
@@ -644,9 +644,9 @@ function loadTrack(index, autoPlay = true) {
         const titleEl = document.getElementById('trackTitle');
         const artistEl = document.getElementById('trackArtist');
         const albumEl = document.getElementById('trackAlbum');
-        titleEl.innerText = title;
-        artistEl.innerText = artist;
-        albumEl.innerText = album;
+        titleEl.innerHTML = `<i class="fa-solid fa-music meta-icon"></i>${title.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}`;
+        artistEl.innerHTML = `<i class="fa-solid fa-microphone meta-icon"></i>${artist.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}`;
+        albumEl.innerHTML = `<i class="fa-solid fa-record-vinyl meta-icon"></i>${album.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}`;
         
         requestAnimationFrame(() => {
             fitText(titleEl, 20, 9);
@@ -1416,7 +1416,15 @@ function hideAllMenus() {
 
 let timeRemaining = false;
 
-document.getElementById('timeCounter').addEventListener('click', () => {
+const timeCounterEl = document.getElementById('timeCounter');
+let _timeTouchHandled = false;
+timeCounterEl.addEventListener('touchend', (e) => {
+    e.preventDefault();
+    _timeTouchHandled = true;
+    timeRemaining = !timeRemaining;
+});
+timeCounterEl.addEventListener('click', () => {
+    if (_timeTouchHandled) { _timeTouchHandled = false; return; }
     timeRemaining = !timeRemaining;
 });
 
@@ -1426,10 +1434,10 @@ audio.ontimeupdate = () => {
     const dur = audio.duration || 0;
     if (timeRemaining) {
         const rem = formatTime(Math.max(0, dur - audio.currentTime));
-        document.getElementById('timeCounter').innerHTML = 'TIME ' + sep('-') + rem + ' ' + sep('/') + ' ' + formatTime(dur);
+        document.getElementById('timeCounter').innerHTML = 'TIME: ' + sep('-') + rem + ' ' + sep('/') + ' ' + formatTime(dur);
     } else {
         const cur = formatTime(audio.currentTime);
-        document.getElementById('timeCounter').innerHTML = 'TIME ' + cur + ' ' + sep('/') + ' ' + formatTime(dur);
+        document.getElementById('timeCounter').innerHTML = 'TIME: ' + cur + ' ' + sep('/') + ' ' + formatTime(dur);
     }
 };
 
