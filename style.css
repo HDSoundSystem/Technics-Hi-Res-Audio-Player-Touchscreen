@@ -155,7 +155,7 @@ body {
     max-width: 1700px;
     height: 650px;
     background-color: var(--display-bg);
-    border: 3px solid var(--screen-border);
+    border: 2px solid var(--screen-border);
     position: relative;
     display: flex;
     flex-direction: column;
