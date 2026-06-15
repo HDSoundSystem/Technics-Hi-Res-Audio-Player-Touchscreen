@@ -644,9 +644,9 @@ function loadTrack(index, autoPlay = true) {
         const titleEl = document.getElementById('trackTitle');
         const artistEl = document.getElementById('trackArtist');
         const albumEl = document.getElementById('trackAlbum');
-        titleEl.innerHTML = `<i class="fa-solid fa-music meta-icon"></i>${title.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}`;
-        artistEl.innerHTML = `<i class="fa-solid fa-microphone meta-icon"></i>${artist.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}`;
-        albumEl.innerHTML = `<i class="fa-solid fa-record-vinyl meta-icon"></i>${album.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}`;
+        titleEl.innerHTML = `${title.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}`;
+        artistEl.innerHTML = `${artist.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}`;
+        albumEl.innerHTML = `${album.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}`;
         
         requestAnimationFrame(() => {
             fitText(titleEl, 20, 9);
