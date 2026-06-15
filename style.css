@@ -12,7 +12,7 @@
     --pwr-button-size: 75px;
     --ui-off-opacity: 0;
     --chassis-base: #d1d1d1;
-    --screen-border: #303030;
+    --screen-border: #000000;
     --chassis-W: 1800px;
     --chassis-H: 680px;
 }
@@ -702,7 +702,7 @@ body {
 
 .controls-bar {
     height: 85px;
-    background: linear-gradient(0deg, rgb(43, 43, 43) 0%, rgba(0, 0, 0, 0.8) 100%);
+    
     display: flex;
     align-items: center;
     justify-content: center;
