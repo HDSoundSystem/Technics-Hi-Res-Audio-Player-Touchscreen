@@ -146,11 +146,11 @@ function loadPreferences() {
         if (analogSenseDisp) analogSenseDisp.innerText = Math.round(analogSensitivity * 100) + '%';
         if (p.loudness) { isLoudnessActive = p.loudness; const btn = document.getElementById('loudnessBtn'); if (btn) { btn.textContent = isLoudnessActive ? 'ON' : 'OFF'; btn.classList.toggle('active', isLoudnessActive); } const loudInd = document.getElementById('loudnessIndicator'); if (loudInd && isLoudnessActive) loudInd.style.display = 'block'; }
         if (p.appBackground) { appBgColorPicker.value = p.appBackground; updateAppBackground(p.appBackground); }
-        if (p.artBgActive) {
-            isArtBgActive = true;
+        if (p.artBgActive !== undefined) {
+            isArtBgActive = p.artBgActive;
             const btn = document.getElementById('artBgToggleBtn');
-            if (btn) { btn.textContent = 'ON'; btn.classList.add('active'); }
-            document.getElementById('artworkBg').classList.add('active');
+            if (btn) { btn.textContent = isArtBgActive ? 'ON' : 'OFF'; btn.classList.toggle('active', isArtBgActive); }
+            document.getElementById('artworkBg').classList.toggle('active', isArtBgActive);
         }
         if (p.theme) { setTheme(p.theme); }
     }
