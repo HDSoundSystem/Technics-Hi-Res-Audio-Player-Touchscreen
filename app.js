@@ -671,17 +671,19 @@ function loadTrack(index, autoPlay = true) {
         const cachedCover = coverCache.get(file);
         const tmp = document.createElement('div');
         tmp.innerHTML = metaCache.get(file);
-        const title = (tmp.querySelector('.pl-title')?.textContent.replace('TITLE: ', '')) || file.name.toUpperCase();
-        const artist = (tmp.querySelector('.pl-artist')?.textContent.replace('ARTIST: ', '')) || 'UNKNOWN ARTIST';
-        const album = (tmp.querySelector('.pl-album')?.textContent.replace('ALBUM: ', '')) || 'UNKNOWN ALBUM';
+        const spans = tmp.querySelectorAll('span');
+        const title = spans[0] ? spans[0].textContent.replace('TITLE: ', '') : file.name.toUpperCase();
+        const artist = spans[1] ? spans[1].textContent.replace('ARTIST: ', '') : 'UNKNOWN ARTIST';
+        const album = spans[2] ? spans[2].textContent.replace('ALBUM: ', '') : 'UNKNOWN ALBUM';
         applyTrackMeta(title, artist, album, cachedCover);
     } else if (_hydrateFromPersisted(file)) {
         
         const tmp = document.createElement('div');
         tmp.innerHTML = metaCache.get(file);
-        const title = (tmp.querySelector('.pl-title')?.textContent.replace('TITLE: ', '')) || file.name.toUpperCase();
-        const artist = (tmp.querySelector('.pl-artist')?.textContent.replace('ARTIST: ', '')) || 'UNKNOWN ARTIST';
-        const album = (tmp.querySelector('.pl-album')?.textContent.replace('ALBUM: ', '')) || 'UNKNOWN ALBUM';
+        const spans = tmp.querySelectorAll('span');
+        const title = spans[0] ? spans[0].textContent.replace('TITLE: ', '') : file.name.toUpperCase();
+        const artist = spans[1] ? spans[1].textContent.replace('ARTIST: ', '') : 'UNKNOWN ARTIST';
+        const album = spans[2] ? spans[2].textContent.replace('ALBUM: ', '') : 'UNKNOWN ALBUM';
         applyTrackMeta(title, artist, album, null);
         jsmediatags.read(file, {
             onSuccess: (tag) => {
@@ -698,23 +700,21 @@ function loadTrack(index, autoPlay = true) {
                 const title = (t.title || file.name).toUpperCase();
                 const artist = (t.artist || 'UNKNOWN ARTIST').toUpperCase();
                 const album = (t.album || 'UNKNOWN ALBUM').toUpperCase();
-                const track = t.track ? String(t.track).split('/')[0].padStart(2, '0') : '';
                 const coverUrl = extractCover(t);
 
                 const html = '<span class="pl-title">TITLE: ' + title + '</span>'
-                    + (track ? '<span class="pl-track">TRACK: ' + track + '</span>' : '')
                     + '<span class="pl-artist">ARTIST: ' + artist + '</span>'
                     + (album ? '<span class="pl-album">ALBUM: ' + album + '</span>' : '');
                 metaCache.set(file, html);
                 coverCache.set(file, coverUrl);
-                _persistMeta(file, title, artist, album, track);
+                _persistMeta(file, title, artist, album);
                 applyTrackMeta(title, artist, album, coverUrl);
             },
             onError: () => {
                 const title = file.name.toUpperCase();
                 metaCache.set(file, '<span class="pl-title">' + title + '</span>');
                 coverCache.set(file, null);
-                _persistMeta(file, title, 'UNKNOWN ARTIST', '', '');
+                _persistMeta(file, title, 'UNKNOWN ARTIST', '');
                 applyTrackMeta(title, 'UNKNOWN ARTIST', 'UNKNOWN ALBUM', null);
             }
         });
@@ -1060,7 +1060,6 @@ function _hydrateFromPersisted(file) {
     const p = _pMeta[_cacheKey(file)];
     if (!p) return false;
     const html = '<span class="pl-title">TITLE: ' + p.title + '</span>'
-        + (p.track ? '<span class="pl-track">TRACK: ' + p.track + '</span>' : '')
         + '<span class="pl-artist">ARTIST: ' + p.artist + '</span>'
         + (p.album ? '<span class="pl-album">ALBUM: ' + p.album + '</span>' : '');
     metaCache.set(file, html);
@@ -1068,8 +1067,8 @@ function _hydrateFromPersisted(file) {
     return true;
 }
 
-function _persistMeta(file, title, artist, album, track) {
-    _pMeta[_cacheKey(file)] = { title, artist, album, track: track || '' };
+function _persistMeta(file, title, artist, album) {
+    _pMeta[_cacheKey(file)] = { title, artist, album };
     try { localStorage.setItem(_META_STORE, JSON.stringify(_pMeta)); } catch (e) { }
 }
 
@@ -1117,13 +1116,11 @@ function prefetchNext() {
                 const title = (t.title || file.name).toUpperCase();
                 const artist = (t.artist || 'UNKNOWN ARTIST').toUpperCase();
                 const album = (t.album || '').toUpperCase();
-                const track = t.track ? String(t.track).split('/')[0].padStart(2, '0') : '';
                 const html = '<span class="pl-title">TITLE: ' + title + '</span>'
-                    + (track ? '<span class="pl-track">TRACK: ' + track + '</span>' : '')
                     + '<span class="pl-artist">ARTIST: ' + artist + '</span>'
                     + (album ? '<span class="pl-album">ALBUM: ' + album + '</span>' : '');
                 metaCache.set(file, html);
-                _persistMeta(file, title, artist, album, track);
+                _persistMeta(file, title, artist, album);
                 const coverUrl = extractCover(t);
                 coverCache.set(file, coverUrl);
                 prefetchNext();
@@ -1131,7 +1128,7 @@ function prefetchNext() {
             onError: () => {
                 const title = file.name.toUpperCase();
                 metaCache.set(file, '<span class="pl-title">' + title + '</span>');
-                _persistMeta(file, title, 'UNKNOWN ARTIST', '', '');
+                _persistMeta(file, title, 'UNKNOWN ARTIST', '');
                 coverCache.set(file, null);
                 prefetchNext();
             }
@@ -1181,13 +1178,11 @@ function getTrackLabel(file, textEl, imgEl) {
             const title = (t.title || file.name).toUpperCase();
             const artist = (t.artist || 'UNKNOWN ARTIST').toUpperCase();
             const album = (t.album || '').toUpperCase();
-            const track = t.track ? String(t.track).split('/')[0].padStart(2, '0') : '';
             const html = '<span class="pl-title">TITLE: ' + title + '</span>'
-                + (track ? '<span class="pl-track">TRACK: ' + track + '</span>' : '')
                 + '<span class="pl-artist">ARTIST: ' + artist + '</span>'
                 + (album ? '<span class="pl-album">ALBUM: ' + album + '</span>' : '');
             metaCache.set(file, html);
-            _persistMeta(file, title, artist, album, track);
+            _persistMeta(file, title, artist, album);
             textEl.innerHTML = html;
 
             const coverUrl = extractCover(t);
@@ -1199,7 +1194,7 @@ function getTrackLabel(file, textEl, imgEl) {
             const title = file.name.toUpperCase();
             const html = '<span class="pl-title">' + title + '</span>';
             metaCache.set(file, html);
-            _persistMeta(file, title, 'UNKNOWN ARTIST', '', '');
+            _persistMeta(file, title, 'UNKNOWN ARTIST', '');
             coverCache.set(file, null);
             textEl.innerHTML = html;
             if (imgEl) { imgEl.src = 'img/Technics_cover.webp'; imgEl.style.display = 'block'; }

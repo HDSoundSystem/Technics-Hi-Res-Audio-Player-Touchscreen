@@ -927,7 +927,6 @@ body {
 }
 
 .pl-title,
-.pl-track,
 .pl-artist,
 .pl-album {
     display: block;
@@ -942,13 +941,6 @@ body {
 .pl-title {
     font-size: 13px;
     color: #ffffff;
-}
-
-.pl-track {
-    font-size: 11px;
-    color: var(--touch-color);
-    letter-spacing: 2px;
-    opacity: 0.75;
 }
 
 .pl-artist {
