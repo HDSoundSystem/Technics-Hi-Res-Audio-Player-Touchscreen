@@ -90,6 +90,9 @@ powerModal.addEventListener('click', (e) => {
 });
 
 const SEGMENT_COUNT = 30;
+// Réglages du loudness (en dB) — modifie ces valeurs pour ajuster l'effet
+const LOUDNESS_BASS_GAIN = 8;
+const LOUDNESS_TREBLE_GAIN = 4;
 let audioCtx, source, bassFilter, trebleFilter, analyser, loudnessBassFilter, loudnessTrebleFilter;
 let dspMidFilter, dspMidFilter2, dspPresenceFilter, dspAirFilter;
 let currentDspPreset = 'flat';
@@ -319,8 +322,8 @@ function initAudioContext() {
         splitter.connect(spectrumAnalyserR, 1);
 
         if (isLoudnessActive) {
-            loudnessBassFilter.gain.value = 8;
-            loudnessTrebleFilter.gain.value = 4;
+            loudnessBassFilter.gain.value = LOUDNESS_BASS_GAIN;
+            loudnessTrebleFilter.gain.value = LOUDNESS_TREBLE_GAIN;
         }
 
         if (currentDspPreset && currentDspPreset !== 'flat') {
@@ -336,8 +339,8 @@ function toggleLoudness() {
     btn.textContent = isLoudnessActive ? 'ON' : 'OFF';
     btn.classList.toggle('active', isLoudnessActive);
     if (loudnessBassFilter) {
-        loudnessBassFilter.gain.value = isLoudnessActive ? 8 : 0;
-        loudnessTrebleFilter.gain.value = isLoudnessActive ? 4 : 0;
+        loudnessBassFilter.gain.value = isLoudnessActive ? LOUDNESS_BASS_GAIN : 0;
+        loudnessTrebleFilter.gain.value = isLoudnessActive ? LOUDNESS_TREBLE_GAIN : 0;
     }
     const loudInd = document.getElementById('loudnessIndicator');
     if (loudInd) loudInd.style.display = isLoudnessActive ? 'block' : 'none';
